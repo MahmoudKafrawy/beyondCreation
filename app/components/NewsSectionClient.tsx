@@ -1,8 +1,9 @@
 "use client";
+import { NEWS_API_1_ENDPOINTS } from "@/endpoints/newsAPI";
 import { NEWS_YORK_TIMES_ENDPOINTS } from "@/endpoints/nyTimesAPI";
 import { requester } from "@/lib/requester";
 import { useQueryStore } from "@/store/useQueryStore";
-import { INEW_YORK_TIMES_SEARCH } from "@/types/interfaces";
+import { INEWS_API_RESPONSE, INEW_YORK_TIMES_SEARCH } from "@/types/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { NewYorkTimesCard } from "./NewYorkTimesCard";
@@ -10,22 +11,33 @@ import { NewsCard } from "./NewsCard";
 import NewsCardSkeleton from "./NewsCardSkeleton";
 
 export default function NewsSectionClient({ shuffledData }: { shuffledData?: any[] }) {
-  const { query } = useQueryStore();
-
-  const { data: dataSource2, isFetching } = useQuery<INEW_YORK_TIMES_SEARCH>({
-    queryKey: ["source2", query],
+  const { query, filters } = useQueryStore();
+  console.log(JSON.stringify(filters));
+  const { data: dataSource1 } = useQuery<INEWS_API_RESPONSE>({
+    queryKey: ["source1", query, JSON.stringify(filters)],
     queryFn: () =>
       requester({
-        endpoint: NEWS_YORK_TIMES_ENDPOINTS.searchArticles,
-        queryParams: { "api-key": process.env.NEXT_PUBLIC_NEW_YORK_TIMES_API_KEY as string },
+        endpoint: NEWS_API_1_ENDPOINTS.getTopHeadlines,
+        queryParams: { apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY as string, country: "eg" },
       }),
     retry: 0,
     refetchInterval: 0,
     refetchOnWindowFocus: false,
-    enabled: !!query,
+    enabled: !!query || !!filters.dateRange || !!filters.category,
   });
 
-  console.log(query, Boolean(query));
+  const { data: dataSource2, isFetching } = useQuery<INEW_YORK_TIMES_SEARCH>({
+    queryKey: ["source2", query, JSON.stringify(filters)],
+    queryFn: () =>
+      requester({
+        endpoint: NEWS_YORK_TIMES_ENDPOINTS.searchArticles,
+        queryParams: { "api-key": process.env.NEXT_PUBLIC_NEW_YORK_TIMES_API_KEY as string, q: query },
+      }),
+    retry: 0,
+    refetchInterval: 0,
+    refetchOnWindowFocus: false,
+    enabled: !!query || !!filters.dateRange || !!filters.category,
+  });
 
   if (isFetching)
     return (

@@ -1,9 +1,13 @@
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { Filters } from "./components/Filters";
 import NewsCardSkeleton from "./components/NewsCardSkeleton";
 import NewsSectionServerSide from "./components/NewsSectionServerSide";
 import { SearchSection } from "./components/SearchSection";
 
+export const metadata: Metadata = {
+  title: "Beyond Creation",
+};
 export default async function Page() {
   return (
     <main className="container mx-auto p-6 min-h-screen">

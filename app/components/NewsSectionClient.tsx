@@ -4,26 +4,27 @@ import { NEWS_YORK_TIMES_ENDPOINTS } from "@/endpoints/nyTimesAPI";
 import { requester } from "@/lib/requester";
 import { useQueryStore } from "@/store/useQueryStore";
 import { INEWS_API_RESPONSE, INEW_YORK_TIMES_SEARCH } from "@/types/interfaces";
+import { shuffleArrays } from "@/utils/shuffleArrays";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import moment from "moment";
 import { NewYorkTimesCard } from "./NewYorkTimesCard";
 import { NewsCard } from "./NewsCard";
 import NewsCardSkeleton from "./NewsCardSkeleton";
 
 export default function NewsSectionClient({ shuffledData }: { shuffledData?: any[] }) {
   const { query, filters } = useQueryStore();
-  console.log(JSON.stringify(filters));
   const { data: dataSource1 } = useQuery<INEWS_API_RESPONSE>({
     queryKey: ["source1", query, JSON.stringify(filters)],
     queryFn: () =>
       requester({
-        endpoint: NEWS_API_1_ENDPOINTS.getTopHeadlines,
-        queryParams: { apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY as string, country: "eg" },
+        endpoint: NEWS_API_1_ENDPOINTS.getEverything,
+        queryParams: { apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY as string, q: query },
       }),
     retry: 0,
     refetchInterval: 0,
     refetchOnWindowFocus: false,
-    enabled: !!query || !!filters.dateRange || !!filters.category,
+    enabled: !!query || !Object.keys(filters.dateRange) || !!filters.category,
   });
 
   const { data: dataSource2, isFetching } = useQuery<INEW_YORK_TIMES_SEARCH>({
@@ -31,13 +32,26 @@ export default function NewsSectionClient({ shuffledData }: { shuffledData?: any
     queryFn: () =>
       requester({
         endpoint: NEWS_YORK_TIMES_ENDPOINTS.searchArticles,
-        queryParams: { "api-key": process.env.NEXT_PUBLIC_NEW_YORK_TIMES_API_KEY as string, q: query },
+        queryParams: {
+          "api-key": process.env.NEXT_PUBLIC_NEW_YORK_TIMES_API_KEY as string,
+          q: query,
+          // ...(filters.category ? { fq: `news_desk:${filters.category}` } : {}),
+          ...(filters.dateRange.from ? { begin_date: moment(filters.dateRange.from).format("YYYYMMDD") } : {}),
+          ...(filters.dateRange.to ? { end_date: moment(filters.dateRange.to).format("YYYYMMDD") } : {}),
+        },
       }),
     retry: 0,
     refetchInterval: 0,
     refetchOnWindowFocus: false,
-    enabled: !!query || !!filters.dateRange || !!filters.category,
+    enabled: !!query || !Object.keys(filters.dateRange) || !!filters.category,
   });
+
+  const queryData =
+    dataSource1?.articles || dataSource2?.response.docs
+      ? shuffleArrays(dataSource1?.articles, dataSource2?.response.docs)
+      : [];
+
+  const dataToShow = !!query || !Object.keys(filters.dateRange) || !!filters.category ? queryData : shuffledData;
 
   if (isFetching)
     return (
@@ -48,23 +62,11 @@ export default function NewsSectionClient({ shuffledData }: { shuffledData?: any
       </div>
     );
 
-  if (query)
-    return (
-      <>
-        <h1 className="text-2xl font-medium pb-4">Search Results</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {dataSource2?.response.docs?.map((el: any) => (
-            <NewYorkTimesCard key={el.url} article={el} />
-          ))}
-        </div>
-      </>
-    );
-
   return (
     <>
-      <h1 className="text-2xl font-medium pb-4">Trending News </h1>
+      <h1 className="text-2xl font-medium pb-4">{query ? "Search Results" : "Trending News"}</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {shuffledData?.map((el: any, index: number) => {
+        {dataToShow?.map((el: any, index: number) => {
           // we can make type check better by using `instanceof`
           // used el.url because its unique and shared between 2 sources
           return (
@@ -75,7 +77,11 @@ export default function NewsSectionClient({ shuffledData }: { shuffledData?: any
               viewport={{ once: true, amount: 0.3 }}
               key={index}
             >
-              {"id" in el ? <NewYorkTimesCard key={el.url} article={el} /> : <NewsCard key={el.url} article={el} />}
+              {el.source == "The New York Times" || el.source == "New York Times" ? (
+                <NewYorkTimesCard key={el.url} article={el} />
+              ) : (
+                <NewsCard key={el.url} article={el} />
+              )}
             </motion.div>
           );
         })}

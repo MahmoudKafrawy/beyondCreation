@@ -3,20 +3,30 @@ import { useQueryStore } from "@/store/useQueryStore";
 import { Button } from "@nextui-org/button";
 import { DateRangePicker } from "@nextui-org/date-picker";
 import { Select, SelectItem } from "@nextui-org/select";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function Filters() {
-  const { setFilters } = useQueryStore();
+  const { setFilters, query, clearFilters } = useQueryStore();
 
   const [dateRange, setDateRange] = useState<any>({});
   const [category, setCategory] = useState<any>("");
 
   const categoryRef = useRef<any>();
+
+  useEffect(() => {
+    if (query == "") {
+      setCategory([""]);
+      setDateRange({});
+      clearFilters();
+    }
+  }, [query]);
+
   return (
     <div className="py-5 grid grid-cols-1 lg:grid-cols-3 items-end gap-4">
-      <DateRangePicker size="lg" value={dateRange} onChange={setDateRange} />
+      <DateRangePicker size="lg" value={dateRange} onChange={setDateRange} isDisabled={!query} />
       <div className="flex justify-between items-center gap-4">
         <Select
+          isDisabled={!query}
           label="Select category"
           className="w-full"
           size="sm"
@@ -25,8 +35,8 @@ export function Filters() {
           selectedKeys={[category]}
           onChange={(e) => setCategory(e.target.value)}
         >
-          <SelectItem value={"SS"} key={"SS"}>
-            ss
+          <SelectItem value={"Sports"} key={"Sports"}>
+            Sports
           </SelectItem>
         </Select>
       </div>
@@ -36,10 +46,11 @@ export function Filters() {
           onClick={() => {
             setCategory([""]);
             setDateRange({});
-            setFilters({});
+            clearFilters();
           }}
+          isDisabled={!query}
         >
-          clear
+          Clear Filters
         </Button>
         <Button
           className="bg-primary text-white w-[120px]"
@@ -49,6 +60,7 @@ export function Filters() {
               dateRange: { from: new Date(dateRange.start), to: new Date(dateRange.end) },
             });
           }}
+          isDisabled={!query}
         >
           Apply
         </Button>

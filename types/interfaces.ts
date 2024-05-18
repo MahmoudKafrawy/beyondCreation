@@ -73,7 +73,7 @@ export interface INEW_YORK_TIMES_SEARCH {
 }
 
 interface Response {
-  docs: Doc[];
+  docs: IDoc[];
   meta: Meta;
 }
 
@@ -83,7 +83,7 @@ interface Meta {
   time: number;
 }
 
-interface Doc {
+export interface IDoc {
   abstract: string;
   web_url: string;
   snippet: string;

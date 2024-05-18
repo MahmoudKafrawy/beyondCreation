@@ -1,7 +1,7 @@
-import { Filters } from "@/components/Filters";
 import { queryClient } from "@/lib/queryClient";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { Suspense } from "react";
+import { Filters } from "./components/Filters";
 import NewsSectionServerSide from "./components/NewsSectionServerSide";
 import { SearchSection } from "./components/SearchSection";
 

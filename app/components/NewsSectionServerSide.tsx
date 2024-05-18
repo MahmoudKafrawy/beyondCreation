@@ -2,8 +2,9 @@ import { NEWS_API_1_ENDPOINTS } from "@/endpoints/newsAPI";
 import { NEWS_YORK_TIMES_ENDPOINTS } from "@/endpoints/nyTimesAPI";
 import { queryClient } from "@/lib/queryClient";
 import { requester } from "@/lib/requester";
-import dynamic from "next/dynamic";
-const NewsSectionClient = dynamic(() => import("./NewsSectionClient"), { ssr: false });
+import { INEWS_API_RESPONSE, INEW_YORK_TIMES_RESPONSE } from "@/types/interfaces";
+import { shuffleArrays } from "@/utils/shuffleArrays";
+import NewsSectionClient from "./NewsSectionClient";
 
 export default async function NewsSectionServerSide() {
   await queryClient.prefetchQuery({
@@ -25,6 +26,11 @@ export default async function NewsSectionServerSide() {
       }),
     staleTime: 60 * 1000 * 15,
   });
+  const dataSource1 = queryClient.getQueryData<INEWS_API_RESPONSE>(["source1"]);
+  const dataSource2 = queryClient.getQueryData<INEW_YORK_TIMES_RESPONSE>(["source2"]);
 
-  return <NewsSectionClient />;
+  const shuffledData =
+    (dataSource1?.articles || dataSource2?.results) && shuffleArrays(dataSource1?.articles, dataSource2?.results);
+
+  return <NewsSectionClient shuffledData={shuffledData} />;
 }

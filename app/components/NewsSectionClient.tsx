@@ -53,6 +53,8 @@ export default function NewsSectionClient({ shuffledData }: { shuffledData?: any
 
   const dataToShow = !!query || !Object.keys(filters.dateRange) || !!filters.category ? queryData : shuffledData;
 
+  if (!dataToShow) return <>No data found</>;
+
   if (isFetching)
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

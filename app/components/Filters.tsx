@@ -18,7 +18,7 @@ export function Filters() {
       <div className="flex justify-between items-center gap-4">
         <Select
           label="Select category"
-          className="max-w-xs"
+          className="w-full"
           size="sm"
           radius="lg"
           ref={categoryRef}
@@ -29,6 +29,8 @@ export function Filters() {
             ss
           </SelectItem>
         </Select>
+      </div>
+      <div className="flex justify-end gap-2">
         <Button
           className="bg-primary text-white w-[120px]"
           onClick={() => {

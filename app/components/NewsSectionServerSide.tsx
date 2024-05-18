@@ -26,6 +26,7 @@ export default async function NewsSectionServerSide() {
       }),
     staleTime: 60 * 1000 * 15,
   });
+
   const dataSource1 = queryClient.getQueryData<INEWS_API_RESPONSE>(["source1"]);
   const dataSource2 = queryClient.getQueryData<INEW_YORK_TIMES_RESPONSE>(["source2"]);
 

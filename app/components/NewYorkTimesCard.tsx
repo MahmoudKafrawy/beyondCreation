@@ -9,7 +9,7 @@ export function NewYorkTimesCard({ article }: { article: Result }) {
         <a href={article.url} target="_blank">
           <p className="text-large uppercase font-bold">{article.title}</p>
         </a>
-        <small className="text-default-500">{moment(article.published_date).fromNow()}</small>
+        <p className="text-default-500 text-sm text-nowrap">{moment(article.published_date).fromNow()}</p>
       </CardHeader>
       <CardBody>
         <div className="flex gap-2">

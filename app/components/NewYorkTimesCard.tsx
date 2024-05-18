@@ -4,7 +4,7 @@ import moment from "moment";
 
 export function NewYorkTimesCard({ article }: { article: Result }) {
   return (
-    <Card className="my-4">
+    <Card>
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <a href={article.url} target="_blank">
           <p className="text-large uppercase font-bold">{article.title}</p>

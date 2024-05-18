@@ -5,4 +5,8 @@ export const NEWS_YORK_TIMES_ENDPOINTS = {
     url: NEW_YORK_TIMES_API_URL + "/svc/mostpopular/v2/viewed/1.json",
     method: MethodTypes.GET,
   },
+  searchArticles: {
+    url: NEW_YORK_TIMES_API_URL + "/svc/search/v2/articlesearch.json",
+    method: MethodTypes.GET,
+  },
 } satisfies TEndpointsCollection;

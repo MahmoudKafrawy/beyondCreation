@@ -19,7 +19,12 @@ export default function NewsSectionClient({ shuffledData }: { shuffledData?: any
     queryFn: () =>
       requester({
         endpoint: NEWS_API_1_ENDPOINTS.getEverything,
-        queryParams: { apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY as string, q: query },
+        queryParams: {
+          apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY as string,
+          q: query,
+          ...(filters.dateRange.from ? { from: moment(filters.dateRange.from).format("YYYY-MM-DD") } : {}),
+          ...(filters.dateRange.to ? { to: moment(filters.dateRange.to).format("YYYY-MM-DD") } : {}),
+        },
       }),
     retry: 0,
     refetchInterval: 0,

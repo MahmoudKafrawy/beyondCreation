@@ -12,6 +12,7 @@ export function SearchSection() {
     <section className="flex items-center gap-8">
       <Input
         label="search"
+        placeholder="البحث عن ... الاهلي , الزمالك , محمد صلاح , سعر الدولار"
         className="border-[#6db5ca]"
         size="md"
         ref={searchRef}

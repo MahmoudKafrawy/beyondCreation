@@ -3,17 +3,39 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import moment from "moment";
 
 export function NewsCard({ article }: { article: IArticle }) {
+  console.log(article);
+
+  const imageSource = article?.urlToImage;
+
+  const articleTitle = article?.title;
+
+  const articleURL = article?.url;
+
+  const articleData = article?.publishedAt;
+
+  const articleDescription = article.description;
+
+  const artiCleSource = article?.source.name;
+
   return (
-    <Card className="my-4">
+    <Card>
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-        <a href={article.url} target="_blank">
-          <p className="uppercase font-bold text-large">{article.title}</p>
+        <a href={articleURL} target="_blank">
+          <p className="text-large uppercase font-bold">{articleTitle}</p>
         </a>
-        <small className="text-default-500">{moment(article.publishedAt).fromNow()}</small>
-        <h4 className="font-bold text-tiny ">{article.description}</h4>
+        <p className="text-default-500 text-sm text-nowrap">{moment(articleData).fromNow()}</p>
       </CardHeader>
-      <CardBody className="overflow-visible py-2">
-        <img src={article.urlToImage} alt={article.title} width={200} height={200} />
+      <CardBody>
+        <div className="flex-col gap-2">
+          <div className="flex gap-2">
+            <img src={imageSource} alt={articleTitle} className="w-32 h-32 object-cover" />
+            <div className="flex flex-col justify-between w-full">
+              <p className="font-bold text-tiny">{articleDescription || articleTitle}</p>
+              <p className="text-default-400 self-end">sources : {artiCleSource}</p>
+            </div>
+          </div>
+          <div></div>
+        </div>
       </CardBody>
     </Card>
   );

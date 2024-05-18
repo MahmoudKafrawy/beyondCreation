@@ -16,6 +16,8 @@ export function NewYorkTimesCard({ article }: { article: any }) {
 
   const articleDescription = article.abstract;
 
+  const artiCleSource = article.source;
+
   return (
     <Card>
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
@@ -30,7 +32,7 @@ export function NewYorkTimesCard({ article }: { article: any }) {
             <img src={imageSource} alt={articleTitle} className="w-32 h-32 object-cover" />
             <div className="flex flex-col justify-between w-full">
               <p className="font-bold text-tiny">{articleDescription}</p>
-              <p className="text-default-400 self-end">sources : {article.source}</p>
+              <p className="text-default-400 self-end">sources : {artiCleSource}</p>
             </div>
           </div>
           <div></div>

@@ -10,10 +10,16 @@ export function NewYorkTimesCard({ article }: { article: Result }) {
           <p className="text-large uppercase font-bold">{article.title}</p>
         </a>
         <small className="text-default-500">{moment(article.published_date).fromNow()}</small>
-        <h4 className="font-bold text-tiny">{article.abstract}</h4>
       </CardHeader>
-      <CardBody className="overflow-visible py-2">
-        <img src={article.media?.[0]?.["media-metadata"][0].url} alt={article.title} width={200} height={200} />
+      <CardBody>
+        <div className="flex gap-2">
+          <img
+            src={article.media?.[0]?.["media-metadata"][0].url}
+            alt={article.title}
+            className="w-32 h-32 object-cover"
+          />
+          <p className="font-bold text-tiny">{article.abstract}</p>
+        </div>
       </CardBody>
     </Card>
   );
